@@ -33,8 +33,8 @@ static char* SetPra05(int Choose)
 	scanf("%41s", &Buf[8]);
 	int NameLen;
 	NameLen = strlen(Buf);
-	NameLen == 49 ? sprintf(&Buf[47], "\r\n") :
-		sprintf(&Buf[strlen(Buf)], "\r\n");
+	NameLen >= 47 ? sprintf(&Buf[47], "\r\n") :
+		sprintf(&Buf[NameLen], "\r\n");
 	return Buf;
 }
 
