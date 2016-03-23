@@ -55,13 +55,13 @@ BOOL ReMessege(HANDLE Hcom, char *ReBuf)
 BOOL OpenCom(HANDLE *Hcom, char *ComName, DWORD DesAcc, DWORD Flags)
 {
 	*Hcom = CreateFileA(
-		ComName,//串口逻辑名
-		DesAcc,//访问类型,GENERIC_READ为可读,GENERIC_WRITE为可写
-		0,//是否可以共享,因为串口不可共享,必须为0
-		NULL,//引用安全属性结构,缺省为NULL
-		OPEN_EXISTING,//创建标志,对串口必须为OPEN_EXISTING(打开而不是创建)
-		Flags,//是否进行异步操作,0为同步,FILE_ATTRIBUTE_NORMAL|FILE_FLAG_OVERLAPPED为异步
-		NULL//选用模板文件,对串口必须为NULL
+		ComName,//锟斤拷锟斤拷锟竭硷拷锟斤拷
+		DesAcc,//锟斤拷锟斤拷锟斤拷锟斤拷,GENERIC_READ为锟缴讹拷,GENERIC_WRITE为锟斤拷写
+		0,//锟角凤拷锟斤拷锟皆癸拷锟斤拷,锟斤拷为锟斤拷锟节诧拷锟缴癸拷锟斤拷,锟斤拷锟斤拷为0
+		NULL,//锟斤拷锟矫帮拷全锟斤拷锟皆结构,缺省为NULL
+		OPEN_EXISTING,//锟斤拷锟斤拷锟斤拷志,锟皆达拷锟节憋拷锟斤拷为OPEN_EXISTING(锟津开讹拷锟斤拷锟角达拷锟斤拷)
+		Flags,//锟角凤拷锟斤拷锟斤拷锟届步锟斤拷锟斤拷,0为同锟斤拷,FILE_ATTRIBUTE_NORMAL|FILE_FLAG_OVERLAPPED为锟届步
+		NULL//选锟斤拷模锟斤拷锟侥硷拷,锟皆达拷锟节憋拷锟斤拷为NULL
 		);
 	if (*Hcom == (HANDLE)-1)
 	{
@@ -73,33 +73,33 @@ BOOL OpenCom(HANDLE *Hcom, char *ComName, DWORD DesAcc, DWORD Flags)
 
 BOOL SetBufAndTimeOut(HANDLE Hcom)
 {
-	/*配置串口*/
-	//设置I/O缓冲区(根据通信速率调整)
-	if (SetupComm(Hcom,//设备句柄
-		1024,//输入缓冲区大小(字节)
-		1024 //输出缓冲区大小(字节)
+	/*锟斤拷锟矫达拷锟斤拷*/
+	//锟斤拷锟斤拷I/O锟斤拷锟斤拷锟斤拷(锟斤拷锟斤拷通锟斤拷锟斤拷锟绞碉拷锟斤拷)
+	if (SetupComm(Hcom,//锟借备锟斤拷锟斤拷
+		1024,//锟斤拷锟诫缓锟斤拷锟斤拷锟斤拷小(锟街斤拷)
+		1024 //锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷小(锟街斤拷)
 		) == FALSE)
 	{
 		Err = Err_SetBuffer;
 		return FALSE;
 	}
-	//定义设置超时的结构体  注:超时的作用是若在设置的超时时间内未完成读/写操作,读/写操作仍会结束
+	//锟斤拷锟斤拷锟斤拷锟矫筹拷时锟侥结构锟斤拷  注:锟斤拷时锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟矫的筹拷时时锟斤拷锟斤拷未锟斤拷锟缴讹拷/写锟斤拷锟斤拷,锟斤拷/写锟斤拷锟斤拷锟皆伙拷锟斤拷锟斤拷
 	COMMTIMEOUTS TimeOuts;
 	/*
-	1.读/写总超时=系数*字符数+常量
-	2.系数与常量均为0则表示不使用该超时
-	3.若读间隔超时为MAXDWORD且读系数和常量均为0,那么读入后就会立即返回,不管是否读入要求的字符
-	4.异步通信时,读/写可能会在完成操作前返回,此时超时规定的是操作的完成时间
-	5.时间单位均为ms
+	1.锟斤拷/写锟杰筹拷时=系锟斤拷*锟街凤拷锟斤拷+锟斤拷锟斤拷
+	2.系锟斤拷锟诫常锟斤拷锟斤拷为0锟斤拷锟斤拷示锟斤拷使锟矫该筹拷时
+	3.锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷时为MAXDWORD锟揭讹拷系锟斤拷锟酵筹拷锟斤拷锟斤拷为0,锟斤拷么锟斤拷锟斤拷锟斤拷锟酵伙拷锟斤拷锟斤拷锟斤拷锟斤拷,锟斤拷锟斤拷锟角凤拷锟斤拷锟斤拷要锟斤拷锟斤拷锟街凤拷
+	4.锟届步通锟斤拷时,锟斤拷/写锟斤拷锟杰伙拷锟斤拷锟斤拷锟缴诧拷锟斤拷前锟斤拷锟斤拷,锟斤拷时锟斤拷时锟芥定锟斤拷锟角诧拷锟斤拷锟斤拷锟斤拷锟斤拷时锟斤拷
+	5.时锟戒单位锟斤拷为ms
 	*/
-	//设定读超时
-	TimeOuts.ReadIntervalTimeout = MAXDWORD;//读间隔超时
-	TimeOuts.ReadTotalTimeoutMultiplier = 1;//读时间系数
-	TimeOuts.ReadTotalTimeoutConstant = 10;//读时间常量
-	//设定写超时
-	TimeOuts.WriteTotalTimeoutMultiplier = 50;//写时间系数
-	TimeOuts.WriteTotalTimeoutConstant = 1000;//写时间常量
-	//写入超时设置,读取当前超时设置使用GetCommTimeouts()
+	//锟借定锟斤拷锟斤拷时
+	TimeOuts.ReadIntervalTimeout = MAXDWORD;//锟斤拷锟斤拷锟斤拷锟斤拷时
+	TimeOuts.ReadTotalTimeoutMultiplier = 0;//锟斤拷时锟斤拷系锟斤拷
+	TimeOuts.ReadTotalTimeoutConstant = 1;//锟斤拷时锟戒常锟斤拷
+	//锟借定写锟斤拷时
+	TimeOuts.WriteTotalTimeoutMultiplier = 50;//写时锟斤拷系锟斤拷
+	TimeOuts.WriteTotalTimeoutConstant = 1000;//写时锟戒常锟斤拷
+	//写锟诫超时锟斤拷锟斤拷,锟斤拷取锟斤拷前锟斤拷时锟斤拷锟斤拷使锟斤拷GetCommTimeouts()
 	if (SetCommTimeouts(Hcom, &TimeOuts) == FALSE)
 	{
 		Err = Err_SetTimeOuts;
@@ -110,23 +110,23 @@ BOOL SetBufAndTimeOut(HANDLE Hcom)
 
 BOOL SetDcb(HANDLE Hcom, DWORD BaudRate, BYTE ByteSize, BYTE Parity, BYTE StopBits)
 {
-	//传输设置
+	//锟斤拷锟斤拷锟斤拷锟斤拷
 	DCB dcb;
-	//获取当前DCB信息
+	//锟斤拷取锟斤拷前DCB锟斤拷息
 	if (GetCommState(Hcom, &dcb) == FALSE)
 	{
 		Err = Err_GetDCB;
 		return FALSE;
 	}
-	dcb.BaudRate = BaudRate;//设置波特率,格式为CBR_xxx
-	dcb.ByteSize = ByteSize;//字节长度(4-8)
-	dcb.Parity = Parity;//奇偶校验方法,ODDPARITY 奇校验 EVENPARITY 偶校验 MARKPARITY 标记校验 NOPARITY 无校验
-	dcb.StopBits = StopBits;//停止位位数,ONESTOPBIT 1位停止位 TWOSTOPBITS 2位停止位 ONE5STOPBITS 1.5位停止位
+	dcb.BaudRate = BaudRate;//锟斤拷锟矫诧拷锟斤拷锟斤拷,锟斤拷式为CBR_xxx
+	dcb.ByteSize = ByteSize;//锟街节筹拷锟斤拷(4-8)
+	dcb.Parity = Parity;//锟斤拷偶校锟介方锟斤拷,ODDPARITY 锟斤拷校锟斤拷 EVENPARITY 偶校锟斤拷 MARKPARITY 锟斤拷锟斤拷校锟斤拷 NOPARITY 锟斤拷校锟斤拷
+	dcb.StopBits = StopBits;//停止位位锟斤拷,ONESTOPBIT 1位停止位 TWOSTOPBITS 2位停止位 ONE5STOPBITS 1.5位停止位
 	if (Parity == NOPARITY)
 		dcb.fParity = 0;
 	else
 		dcb.fParity = 1;
-	//写入DCB信息
+	//写锟斤拷DCB锟斤拷息
 	if (SetCommState(Hcom, &dcb) == FALSE)
 	{
 		Err = Err_SetDCB;
@@ -148,22 +148,22 @@ BOOL ClearBuffer(HANDLE Hcom)
 HANDLE SerialPortInit(SerialPort SP)
 {
 	HANDLE Hcom = NULL;
-	/*打开串口*/
+	/*锟津开达拷锟斤拷*/
 	if (OpenCom(&Hcom, SP.ComName, GENERIC_READ | GENERIC_WRITE, 0) == FALSE)
 	{
 		return NULL;
 	}
-	/*设置缓冲区与超时*/
+	/*锟斤拷锟矫伙拷锟斤拷锟斤拷锟诫超时*/
 	if (SetBufAndTimeOut(Hcom) == FALSE)
 	{
 		return NULL;
 	}
-	/*设置DCB*/
+	/*锟斤拷锟斤拷DCB*/
 	if (SetDcb(Hcom, SP.BaudRate, SP.ByteSize, SP.Parity, SP.StopBits) == FALSE)
 	{
 		return NULL;
 	}
-	/*清理缓冲区*/
+	/*锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷*/
 	if (PurgeComm(Hcom, PURGE_TXCLEAR | PURGE_RXCLEAR) == FALSE)
 	{
 		return NULL;
